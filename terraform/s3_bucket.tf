@@ -1,4 +1,4 @@
-3 s3 bucket for to store media uploads
+# s3 bucket for to store media uploads
 resource "aws_s3_bucket" "strapi_uploads" {
   bucket = "docker-strapi-uploads-${random_id.bucket_id.hex}"
 
