@@ -149,10 +149,4 @@ resource "aws_ecs_service" "strapi" {
     security_groups          = [aws_security_group.strapi_sg.id]
     assign_public_ip          = true
   }
-
-  load_balancer {
-    target_group_arn = aws_lb_target_group.strapi.arn
-    container_name   = "strapi"
-    container_port      = 1337
-  }
 }
