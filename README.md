@@ -1,0 +1,1 @@
+# ECS-Fargate-entirely-and-Automate-GitHub-Actions-with-CloudWatch-for-Monitoring
