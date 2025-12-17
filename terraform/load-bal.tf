@@ -1,3 +1,8 @@
+# Filter the default vpc
+data "aws_vpc" "default" {
+  default = true
+}
+
 # Target group for load balancer
 resource "aws_lb_target_group" "strapi" {
   name        = "strapi-tg"
