@@ -137,6 +137,10 @@ resource "aws_ecs_task_definition" "strapi" {
     ]
 
     environment = [
+
+      { name = "UPLOAD_PROVIDER", value = "aws-s3" },
+      { name = "AWS_REGION", value = "eu-north-1" },
+      { name = "AWS_S3_BUCKET", value = aws_s3_bucket.strapi_uploads.bucket },
       { name = "NODE_ENV", value = "production" },
 
       { name = "DATABASE_CLIENT", value = "postgres" },
