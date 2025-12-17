@@ -42,6 +42,29 @@ resource "aws_iam_role_policy_attachment" "ecs_exec_policy" {
 }
 
 # iam policy for ecs to access s3
+resource "aws_iam_policy" "ecs_s3_policy" {
+  name        = "docker-strapi-ecs-s3-policy"
+  description = "Allow ECS tasks to access S3"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:ListBucket"
+        ]
+        Resource = [
+          "arn:aws:s3:::my-bucket",
+          "arn:aws:s3:::my-bucket/*"
+        ]
+      }
+    ]
+  })
+}
+
 resource "aws_iam_role" "ecs_task_role" {
   name = "docker-strapi-s3-task-role"
 
