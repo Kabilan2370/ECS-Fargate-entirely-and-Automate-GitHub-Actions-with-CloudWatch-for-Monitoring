@@ -41,49 +41,7 @@ resource "aws_iam_role_policy_attachment" "ecs_exec_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
-# iam policy for ecs to access s3
-resource "aws_iam_policy" "ecs_s3_policy" {
-  name        = "docker-strapi-ecs-s3-policy"
-  description = "Allow ECS tasks to access S3"
 
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect   = "Allow"
-        Action   = [
-          "s3:GetObject",
-          "s3:PutObject",
-          "s3:ListBucket"
-        ]
-        Resource = [
-          "arn:aws:s3:::my-bucket",
-          "arn:aws:s3:::my-bucket/*"
-        ]
-      }
-    ]
-  })
-}
-
-resource "aws_iam_role" "ecs_task_role" {
-  name = "docker-strapi-s3-task-role"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Effect = "Allow"
-      Principal = {
-        Service = "ecs-tasks.amazonaws.com"
-      }
-      Action = "sts:AssumeRole"
-    }]
-  })
-}
-
-resource "aws_iam_role_policy_attachment" "ecs_task_s3_attach" {
-  role       = aws_iam_role.ecs_task_role.name
-  policy_arn = aws_iam_policy.ecs_s3_policy.arn
-}
 
 # Security Group
 resource "aws_security_group" "strapi_sg" {
@@ -91,31 +49,17 @@ resource "aws_security_group" "strapi_sg" {
   vpc_id = local.default_vpc_id
 
   ingress {
-    from_port   = 1337
+    from_port      = 1337
     to_port        = 1337
-    protocol      = "tcp"
-    cidr_blocks  = ["0.0.0.0/0"]
-  }
-  
-  ingress {
-    from_port   = 80
-    to_port        = 80
-    protocol      = "tcp"
-    cidr_blocks  = ["0.0.0.0/0"]
+    protocol       = "tcp"
+    cidr_blocks    = ["0.0.0.0/0"]
   }
 
   ingress {
-    from_port = 5432
-    to_port      = 5432
-    protocol    = "tcp"
-    self             = true
-  }
-
-  ingress {
-    from_port = 22
-    to_port      = 22
-    protocol    = "tcp"
-    self             = true
+    from_port     = 5432
+    to_port       = 5432
+    protocol      = "tcp"
+    self          = true
   }
 
   egress {
@@ -160,11 +104,6 @@ resource "aws_ecs_task_definition" "strapi" {
     ]
 
     environment = [
-
-      { name = "UPLOAD_PROVIDER", value = "aws-s3" },
-      { name = "AWS_REGION", value = "eu-north-1" },
-      { name = "AWS_S3_BUCKET", value = aws_s3_bucket.strapi_uploads.bucket },
-      { name = "NODE_ENV", value = "production" },
 
       { name = "DATABASE_CLIENT", value = "postgres" },
       { name = "DATABASE_HOST", value = aws_db_instance.strapi.address },
