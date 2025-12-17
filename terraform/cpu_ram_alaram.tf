@@ -40,6 +40,7 @@ resource "aws_cloudwatch_dashboard" "strapi" {
       {
         type = "metric"
         properties = {
+          region   = var.aws_region
           metrics = [
             ["AWS/ECS", "CPUUtilization", "ServiceName", aws_ecs_service.strapi.name, "ClusterName", aws_ecs_cluster.cluster.name],
             [".", "MemoryUtilization", ".", ".", ".", "."]
