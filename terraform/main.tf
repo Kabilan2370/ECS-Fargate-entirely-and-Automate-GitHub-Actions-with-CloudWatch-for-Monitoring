@@ -41,6 +41,27 @@ resource "aws_iam_role_policy_attachment" "ecs_exec_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
+# iam policy for ecs to access s3
+resource "aws_iam_role" "ecs_task_role" {
+  name = "docker-strapi-s3-task-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Principal = {
+        Service = "ecs-tasks.amazonaws.com"
+      }
+      Action = "sts:AssumeRole"
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_task_s3_attach" {
+  role       = aws_iam_role.ecs_task_role.name
+  policy_arn = aws_iam_policy.ecs_s3_policy.arn
+}
+
 # Security Group
 resource "aws_security_group" "strapi_sg" {
   name   = "strapi-docker-sg"
@@ -94,6 +115,7 @@ resource "aws_ecs_task_definition" "strapi" {
   cpu                      			= 512
   memory                   			= 1024
   execution_role_arn       	  	= aws_iam_role.ecs_task_execution.arn
+  task_role_arn                 = aws_iam_role.ecs_task_role.arn
 
   container_definitions = jsonencode([
   {
