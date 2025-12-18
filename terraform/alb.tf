@@ -1,9 +1,6 @@
 # Get default VPC
 data "aws_vpcs" "default" {
-  filter {
-    name   = "isDefault"
-    values = ["true"]
-  }
+  default true
 }
 
 locals {
@@ -14,7 +11,7 @@ locals {
 data "aws_subnets" "default" {
   filter {
     name   = "vpc-id"
-    values = [local.default_vpc_id]
+    values = [data.aws_vpc.default.id]
   }
 }
 
@@ -39,7 +36,7 @@ resource "aws_security_group" "alb" {
   }
 }
 
-3 target group for application load balancer
+# target group for application load balancer
 resource "aws_lb_target_group" "strapi" {
   name        = "docker-strapi-tg2"
   port        = 1337
