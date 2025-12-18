@@ -1,25 +1,9 @@
-# Get default VPC
-data "aws_vpc" "default" {
-  default = true
-}
-
-locals {
-  default_vpc_id = data.aws_vpc.default.ids[0]
-}
-
-# Get default subnets
-data "aws_subnet" "default" {
-  filter {
-    name   = "vpc-id"
-    values = [data.aws_vpc.default.id]
-  }
-}
 
 # security group for alb
 resource "aws_security_group" "alb" {
-  name        = "docker-strapi-alb-sg"
+  name        = "docker-strapi-alb-sg2"
   description = "Allow HTTP inbound"
-  vpc_id      = data.aws_vpc.default.id
+  vpc_id      = local.default_vpc_id
 
   ingress {
     from_port   = 80
@@ -42,7 +26,7 @@ resource "aws_lb_target_group" "strapi" {
   port        = 1337
   protocol    = "HTTP"
   target_type = "ip"
-  vpc_id      = data.aws_vpc.default.id
+  vpc_id      = local.default_vpc_id
 
   health_check {
     path                = "/"
@@ -60,7 +44,7 @@ resource "aws_lb" "strapi" {
   load_balancer_type = "application"
   internal           = false
   security_groups    = [aws_security_group.alb.id]
-  subnets            = data.aws_subnet.default.ids
+  subnets            = data.aws_subnets.default.ids
 }
 
 # load balancer listener
