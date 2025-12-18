@@ -29,15 +29,22 @@
         
 ## The deploy.yml workflows file build and push the docker image into AWS ECR.
 
-Compute: AWS ECS Fargate (serverless containers) for running the Strapi application.
+### Infrastructure Provisioning (Terraform)
 
-Networking: Custom VPC, Subnets, and Security Groups defined by Terraform.
+Terraform is used to provision and manage all AWS resources, including:
 
+ECS Cluster (Fargate)
 
-Storage: Strapi media assets should use an external service like AWS S3.
+ECS Task Definition
 
-Infrastructure as Code (IaC): Terraform manages the complete AWS infrastructure lifecycle.
+ECS Service
 
-CI/CD: GitHub Actions automates the build, push (to ECR), and deployment (via Terraform).
+Load Balancer attached with target group
 
-Monitoring & Logging: AWS CloudWatch for centralized logging and comprehensive metrics.
+IAM Roles & Policies
+
+CloudWatch Log Groups
+
+Networking resources (VPC, Subnets, Security Groups)
+
+Optional CloudWatch Alarms & Dashboards
