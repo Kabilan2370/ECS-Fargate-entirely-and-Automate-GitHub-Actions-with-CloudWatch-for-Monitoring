@@ -1,14 +1,14 @@
 # Get default VPC
-data "aws_vpcs" "default" {
-  default true
+data "aws_vpc" "default" {
+  default = true
 }
 
 locals {
-  default_vpc_id = data.aws_vpcs.default.ids[0]
+  default_vpc_id = data.aws_vpc.default.ids[0]
 }
 
 # Get default subnets
-data "aws_subnets" "default" {
+data "aws_subnet" "default" {
   filter {
     name   = "vpc-id"
     values = [data.aws_vpc.default.id]
@@ -60,7 +60,7 @@ resource "aws_lb" "strapi" {
   load_balancer_type = "application"
   internal           = false
   security_groups    = [aws_security_group.alb.id]
-  subnets            = data.aws_subnets.default.ids
+  subnets            = data.aws_subnet.default.ids
 }
 
 # load balancer listener
