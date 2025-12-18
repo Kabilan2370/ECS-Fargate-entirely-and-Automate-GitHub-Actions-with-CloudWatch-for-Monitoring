@@ -24,6 +24,7 @@
         ├── outputs.tf  
         ├── provider.tf
         ├── database.tf
+        ├── alb.tf
         └── cpu_ram_alaram.tf
         
 ## The deploy.yml workflows file build and push the docker image into AWS ECR.
